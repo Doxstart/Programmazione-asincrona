@@ -10,19 +10,19 @@ class TodoList{
     }
 
     removeTodo(todo){
-
+        this.todoArray = this.todoArray.filter((element) => element !== todo);
     }
 
     sortByTitle(){
-
+        return this.todoArray.sort((todo1, todo2) => todo1.compareByTitle(todo2));
     }
 
     sortByCreationDate(){
-
+        return this.todoArray.sort((todo1, todo2) => todo1.compareByCreationDate(todo2));
     }
 
-    completeTodo(){
-
+    completeTodo(todo){
+        todo.isCompleted = true;
     }
 
     static fromObjectArray(title, objectArray){

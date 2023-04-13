@@ -15,3 +15,8 @@
     border-radius: 10px;
     padding: 5px;
 }
+
+.completed{
+    border-color: green;
+    border-width: 8px;
+}
