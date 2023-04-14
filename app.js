@@ -49,14 +49,14 @@ function displayTodos(){
         newLi.appendChild(dateSpan);
 
         const completeBtn = document.createElement('button');
-        const completeNode = document.createTextNode('completato')
+        const completeNode = document.createTextNode('completato');
         completeBtn.appendChild(completeNode);
-        completeBtn.addEventListener('click', (event) => {superList.completeTodo(todo); displayTodos()});
+        completeBtn.addEventListener('click', (event) => {superList.completeTodo(todo); DataService.putTodo(todo).then(updatedTodo => {displayTodos();})});
 
         const deleteBtn = document.createElement('button');
-        const deleteNode = document.createTextNode('elimina')
+        const deleteNode = document.createTextNode('elimina');
         deleteBtn.appendChild(deleteNode);
-        deleteBtn.addEventListener('click', (event) => {superList.removeTodo(todo); displayTodos()});
+        deleteBtn.addEventListener('click', (event) => {DataService.deleteTodo(todo).then(removedTodo => {superList.removeTodo(todo); displayTodos();})});
 
         newLi.appendChild(completeBtn);
         newLi.appendChild(deleteBtn);
@@ -66,12 +66,104 @@ function displayTodos(){
     }
 }
 
-function displayTodos2(){
-//usa il template literal
+function displayTodos2(){//usa il template literal
+    const todoListTitle = document.getElementById('list-name');
+    todoListTitle.innerHTML = superList.title;
+    const todoListUl = document.getElementById('todo-list');
+
+    todoListUl.innerHTML = ``;
+    for (let i = 0; i < superList.todoArray.length; i++) {
+        const element = superList.todoArray[i];
+        todoListUl.innerHTML += `<li class="todo-li ${element.isCompleted ? 'completed' : ''}">
+                                    <span class="todo-title">${element.title}</span>
+                                    <span class="todo-date">${element.creationDate}</span>
+                                    <button id="complete-btn${i}">Complete</button>
+                                    <button id="delete-btn${i}">Delete</button>
+                                    </li>`  
+    }
+    for (let i = 0; i < superList.todoArray.length; i++) {
+        const element = superList.todoArray[i];
+        const completeButton = document.getElementById(`complete-btn${i}`);
+        const deleteButton = document.getElementById(`delete-btn${i}`);
+
+        completeButton.addEventListener('click', (event) => {
+            superList.completeTodo(element);
+            displayTodos2();
+        });
+
+        deleteButton.addEventListener('click', (event) => {
+            superList.removeTodo(element);
+            displayTodos2();
+        });
+    }
 }
 
 function displayTodos3(){
-//   
+    displayListTitle();
+    const todoListUl = document.getElementById('todo-list');
+    
+    todoListUl.innerHTML = '';
+
+    for (let i = 0; i < superList.todoArray.length; i++) {
+        const todo = superList.todoArray[i];
+        const newLi = document.createElement('li');
+        newLi.classList.add('todo-li');
+        // if (todo.isCompleted) {
+        //     newLi.style.borderColor = 'green';
+        //     newLi.style.borderWidth = '8px';
+        // }
+        if (todo.isCompleted) {
+            newLi.classList.add('completed');
+        }
+
+        newLi.appendChild(createTodoTitleSpan(todo));
+        newLi.appendChild(createTodoDateSpan(todo));
+
+        newLi.appendChild(createCompleteButton(todo));
+        newLi.appendChild(createDeleteButton(todo));
+
+        todoListUl.appendChild(newLi);
+
+    }
+}
+
+function displayListTitle(){
+    const todoListTitle = document.getElementById('list-name');
+    const titleNode = document.createTextNode(superList.title);
+    todoListTitle.innerHTML = '';
+    todoListTitle.appendChild(titleNode);
+}
+
+function createTodoTitleSpan(todo){
+    const titleSpan = document.createElement('span');
+    titleSpan.classList.add('todo-title');
+    const titleNode = document.createTextNode(todo.title);
+    titleSpan.appendChild(titleNode);
+    return titleSpan;
+}
+
+function createTodoDateSpan(todo){
+    const dateSpan = document.createElement('span');
+    dateSpan.classList.add('todo-date');
+    const dateNode = document.createTextNode(todo.creationDate);
+    dateSpan.appendChild(dateNode);
+    return dateSpan;
+}
+
+function createCompleteButton(todo){
+    const completeBtn = document.createElement('button');
+    const completeNode = document.createTextNode('completato');
+    completeBtn.appendChild(completeNode);
+    completeBtn.addEventListener('click', (event) => {superList.completeTodo(todo); displayTodos3()});
+    return completeBtn;
+}
+
+function createDeleteButton(todo){
+    const deleteBtn = document.createElement('button');
+    const deleteNode = document.createTextNode('elimina');
+    deleteBtn.appendChild(deleteNode);
+    deleteBtn.addEventListener('click', (event) => {superList.removeTodo(todo); displayTodos3()});
+    return deleteBtn;
 }
 
 function orderByTitle(){
@@ -84,4 +176,3 @@ function orderByCreationDate(){
     displayTodos();
 }
 
-//digerire entrambe le app.js, vedere i vantaggi di ognuna
